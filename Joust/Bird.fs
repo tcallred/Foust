@@ -28,7 +28,9 @@ module Bird =
 
     type PlatformColision =
         | Landing of Platform
-        | Bumping of Platform
+        | BumpedHead of Platform
+        | BumpedLeft of Platform
+        | BumpedRight of Platform
         | NoCollision
 
     type Bird =
@@ -76,9 +78,17 @@ module Bird =
                    && (bird.Position.X < plat.Position.X + plat.Size.X)) then
                 // Printf.printfn "Landing"
                 Landing plat
-            else
+            else if ((bird.Position.Y) > plat.Position.Y + plat.Size.Y)
+                    && ((bird.Position.X + width > plat.Position.X)
+                        && (bird.Position.X < plat.Position.X + plat.Size.X)) then
                 // Printf.printfn "Bumping: %A %A %A" bird projected_pos plat
-                Bumping plat
+                BumpedHead plat
+            else if (bird.Position.X + width < plat.Position.X) then
+                BumpedLeft plat
+            else if (bird.Position.X > plat.Position.X + plat.Size.X) then
+                BumpedRight plat
+            else
+                NoCollision
 
         | None -> NoCollision
 
@@ -111,7 +121,18 @@ module Bird =
             match detect_collision bird projected_pos platforms with
             | Landing platform ->
                 (new Vector2(projected_pos.X, platform.Position.Y - height), new Vector2(bird.Velocity.X, 0.0F), true)
-            | Bumping platform -> (bird.Position, new Vector2(0.0F, 0.0F), bird.Grounded)
+            | BumpedHead platform ->
+                (new Vector2(projected_pos.X, platform.Position.Y + platform.Size.Y),
+                 new Vector2(bird.Velocity.X, -bird.Velocity.Y),
+                 bird.Grounded)
+            | BumpedLeft platform ->
+                (new Vector2(platform.Position.X - width, projected_pos.Y),
+                 new Vector2(-bird.Velocity.X, bird.Velocity.Y),
+                 bird.Grounded)
+            | BumpedRight platform ->
+                (new Vector2(platform.Position.X + platform.Size.X, projected_pos.Y),
+                 new Vector2(-bird.Velocity.X, bird.Velocity.Y),
+                 bird.Grounded)
             | NoCollision -> (projected_pos, bird.Velocity, standing_on_platform projected_pos platforms)
 
         { bird with
