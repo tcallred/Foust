@@ -1,22 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include=".\Engine\Engine.fs" />
+    <Compile Include=".\Joust\Platform.fs" />
+    <Compile Include=".\Joust\Bird.fs" />
+    <Compile Include=".\Joust\Game.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include=".\SDL2.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="SDL2FS.Core" Version="0.0.8" />
   </ItemGroup>
-
 </Project>
